@@ -1,0 +1,37 @@
+.download_progress {
+  overflow-y: auto;
+  max-height: 250px;
+  width: 500px;
+  background-color: rgb(73, 73, 73);
+
+  border-radius: 10px;
+  scrollbar-gutter: none;
+}
+.download_progress::-webkit-scrollbar {
+  background-color: rgb(0, 0, 0);
+  border-radius: 10px;
+}
+.download_progress::-webkit-scrollbar-thumb {
+  background-color: rgb(107, 107, 107);
+  border-radius: 10px;
+}
+.download_progress::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(167, 167, 167);
+}
+.download_file {
+  height: 50px;
+  background-color: rgb(37, 37, 37);
+  color: white;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 10px;
+
+  border-width: 2px;
+  border-color: rgb(0, 0, 0);
+  border-style: solid;
+
+  transition-duration: 0.25s;
+}
+.download_file:hover {
+  border-color: white;
+}
