@@ -46,19 +46,15 @@ pub fn download(url: &str, path: &str, window: tauri::Window) {
         file.write_all(&buffer[..bytes_read]).unwrap();
         downloaded += bytes_read as u64;
 
-        if total_size > 0 {
-            let percent = ((downloaded as f64) / (total_size as f64)) * 100.0;
+        if total_size > 0 && start.elapsed().as_secs_f64() >= 1.0 {
+            let diff = (downloaded - last_download) as f64;
 
-            if start.elapsed().as_secs_f64() >= 1.0 {
-                let diff = (downloaded - last_download) as f64;
+            task.downloaded = downloaded;
+            task.speed = (diff / start.elapsed().as_secs_f64()) as u64;
+            window.emit("task-update", task.to_json()).unwrap();
 
-                task.downloaded = downloaded;
-                task.speed = (diff / start.elapsed().as_secs_f64()) as u64;
-                window.emit("task-update", task.to_json()).unwrap();
-
-                start = Instant::now();
-                last_download = downloaded;
-            }
+            start = Instant::now();
+            last_download = downloaded;
         }
     }
     task.is_done = true;

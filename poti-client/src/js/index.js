@@ -14,8 +14,8 @@ async function add_backup() {
     backupInfo: {
       name: "Hi",
       id: "",
-      url: "http://localhost:3000",
-      path: "/home/anatoli/Desktop/Poti/poti-client/backup1",
+      url: "http://localhost:3003",
+      path: "/home/anatoli/Desktop/Poti/poti-client/backup3",
     },
   });
 
@@ -32,6 +32,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("backup").addEventListener("click", (e) => {
     e.preventDefault();
-    backup();
+    add_backup();
   });
 });
