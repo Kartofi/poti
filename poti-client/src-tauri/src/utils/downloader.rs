@@ -3,7 +3,7 @@ use std::{ fs::{ File, OpenOptions }, io::{ Read, Write }, time::Instant };
 use reqwest::blocking::Client;
 use tauri::{ window, Emitter };
 
-use crate::utils::format::format_size;
+use crate::utils::{ format::format_size, structs::Task };
 
 pub fn download(url: &str, path: &str, window: tauri::Window) {
     let client = Client::new();
@@ -23,12 +23,20 @@ pub fn download(url: &str, path: &str, window: tauri::Window) {
         .parse()
         .unwrap_or(0);
 
-    let mut file = File::create(path).unwrap();
+    let mut file = File::create(&path).unwrap();
     let mut downloaded: u64 = 0;
     let mut buffer = [0; 8192]; // 8KB buffer
 
     let mut start = Instant::now();
     let mut last_download = 0;
+
+    let mut task = Task::new(
+        path.split("/").last().unwrap_or_default().to_owned(),
+        path.to_owned(),
+        0,
+        total_size,
+        0
+    );
 
     loop {
         let bytes_read = response.read(&mut buffer).unwrap();
@@ -43,24 +51,19 @@ pub fn download(url: &str, path: &str, window: tauri::Window) {
 
             if start.elapsed().as_secs_f64() >= 1.0 {
                 let diff = (downloaded - last_download) as f64;
-                window
-                    .emit(
-                        "frontend-event",
-                        format!(
-                            "Downloaded: {:.1}% [{}/{}] {}/s",
-                            percent,
-                            format_size(downloaded),
-                            format_size(total_size),
-                            format_size((diff / start.elapsed().as_secs_f64()) as u64)
-                        )
-                    )
-                    .unwrap();
+
+                task.downloaded = downloaded;
+                task.speed = (diff / start.elapsed().as_secs_f64()) as u64;
+                window.emit("task-update", task.to_json()).unwrap();
 
                 start = Instant::now();
                 last_download = downloaded;
             }
         }
     }
+    task.is_done = true;
+    task.downloaded = total_size;
+    task.speed = 0;
 
-    println!("Download completed successfully. {}", url);
+    window.emit("task-update", task.to_json()).unwrap();
 }

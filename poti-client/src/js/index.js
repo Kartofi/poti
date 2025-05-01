@@ -3,9 +3,9 @@ const { listen } = window.__TAURI__.event;
 
 async function backup() {
   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  let res = await invoke("backup", { id: "123" });
+  let res = await invoke("backup", { id: "16967331108002224150" });
 
-  window.alert(JSON.stringify(res));
+  console.log(JSON.stringify(res));
 }
 
 async function add_backup() {
@@ -14,7 +14,7 @@ async function add_backup() {
     backupInfo: {
       name: "Hi",
       id: "",
-      url: "http://localhost:30001",
+      url: "http://localhost:3000",
       path: "/home/anatoli/Desktop/Poti/poti-client/backup1",
     },
   });
@@ -22,7 +22,7 @@ async function add_backup() {
   window.alert(JSON.stringify(res));
 }
 async function main() {
-  await listen("frontend-event", (event) => {
+  await listen("task-update", (event) => {
     console.log("Received event:", event.payload);
   });
 }
@@ -32,6 +32,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("backup").addEventListener("click", (e) => {
     e.preventDefault();
-    add_backup();
+    backup();
   });
 });

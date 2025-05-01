@@ -1,4 +1,4 @@
-use std::{ fs::{ self, OpenOptions }, io::{ Read, Write }, thread };
+use std::{ default, fs::{ self, OpenOptions }, io::{ Read, Write }, thread };
 
 use rand::{ self, Rng };
 use serde::{ Deserialize, Serialize };
@@ -7,6 +7,8 @@ use threadpool::ThreadPool;
 use urlencoding::encode;
 
 use crate::{ downloader, URL };
+
+use super::id::gen_id;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BackupItem {
@@ -55,8 +57,34 @@ impl BackupInfo {
         return backup_info;
     }
     pub fn gen_id(&mut self) {
-        let mut rng = rand::rng();
-        let id: u64 = rng.random();
-        self.id = id.to_string();
+        self.id = gen_id();
+    }
+}
+#[derive(Serialize, Deserialize, Default)]
+pub struct Task {
+    pub id: String,
+    pub is_done: bool,
+
+    pub name: String,
+    pub path: String,
+
+    pub downloaded: u64,
+    pub size: u64,
+    pub speed: u64,
+}
+impl Task {
+    pub fn new(name: String, path: String, downloaded: u64, size: u64, speed: u64) -> Task {
+        Task {
+            id: gen_id(),
+            is_done: false,
+            name: name,
+            path: path,
+            downloaded: downloaded,
+            size: size,
+            speed: speed,
+        }
+    }
+    pub fn to_json(&mut self) -> String {
+        return serde_json::to_string_pretty(&self).unwrap();
     }
 }

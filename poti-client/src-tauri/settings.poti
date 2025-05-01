@@ -1,3 +1,10 @@
 {
-  "backups": []
+  "backups": [
+    {
+      "name": "Hi",
+      "id": "16967331108002224150",
+      "url": "http://localhost:3000",
+      "path": "/home/anatoli/Desktop/Poti/backup"
+    }
+  ]
 }
