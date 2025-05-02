@@ -22,9 +22,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "choki"
-version = "1.1.11"
+version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2967e5ec53e802d9bbf3de7373981860cc2934635c8a8e394ea9dc3139469e1d"
+checksum = "bc92d0f4e2615c3d290472688a3d980023416f8e4b07a9eb3226ec0eacc092fb"
 dependencies = [
  "bumpalo",
  "flate2",

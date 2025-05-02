@@ -21,12 +21,7 @@ async function add_backup() {
 
   window.alert(JSON.stringify(res));
 }
-async function main() {
-  await listen("task-update", (event) => {
-    console.log("Received event:", event.payload);
-  });
-}
-main();
+
 window.addEventListener("DOMContentLoaded", () => {
   main();
 
