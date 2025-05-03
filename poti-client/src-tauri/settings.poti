@@ -1,3 +1,11 @@
 {
-  "backups": []
+  "backups": [
+    {
+      "name": "test",
+      "id": "xmCrnP-c3ExOW-kauWtc-xRDAf7",
+      "secret": "a8I7Vc-w8PeJC-IdO7na-pbvTBo",
+      "url": "http://localhost:3000",
+      "path": "/home/anatoli/Desktop/Poti/test"
+    }
+  ]
 }

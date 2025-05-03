@@ -12,6 +12,24 @@ fn main() {
 
     let mut server: Server<BackupItem> = Server::new(Some(0), Some(backup_items));
 
+    server.use_middleware(|url, req, mut res, public_var| {
+        let headers = &req.headers;
+
+        let found = headers.iter().find(|item| item.name == "secret");
+        if found.is_none() {
+            res.set_status(&src::structs::ResponseCode::BadRequest);
+            res.send_string("No secret provided!").unwrap();
+            return false;
+        }
+        let secret = found.unwrap();
+        if secret.value != SETTINGS.secret {
+            res.set_status(&src::structs::ResponseCode::BadRequest);
+            res.send_string("Wrong secret!").unwrap();
+            return false;
+        }
+        return true;
+    });
+
     server
         .get("/journal", |req, mut res, public_var| {
             let mut backup = public_var.unwrap();

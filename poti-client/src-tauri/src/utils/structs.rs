@@ -23,22 +23,23 @@ pub struct BackupItem {
     pub children: Vec<BackupItem>,
 }
 impl BackupItem {
-    pub fn sync(&mut self, window: tauri::Window, threadpool: &ThreadPool) {
+    pub fn sync(&mut self, window: tauri::Window, threadpool: &ThreadPool, secret: &str) {
         if self.is_file == true {
             let url = URL.to_string() + &self.url.replace(&self.name, &encode(&self.name));
             let path = self.path.clone();
+            let secret_clone = secret.to_owned();
 
             let window_clone = window.clone();
 
             threadpool.execute(move || {
-                downloader::download(&url, &path, window_clone);
+                downloader::download(&url, &path, &secret_clone, window_clone);
             });
 
             return;
         }
         fs::create_dir(&self.path).unwrap_or_default();
         for child in &mut self.children {
-            child.sync(window.clone(), threadpool);
+            child.sync(window.clone(), threadpool, secret);
         }
     }
 }
@@ -46,12 +47,20 @@ impl BackupItem {
 pub struct BackupInfo {
     pub name: String,
     pub id: String,
+    pub secret: String,
+
     pub url: String,
     pub path: String,
 }
 impl BackupInfo {
-    pub fn new(name: String, url: String, path: String) -> BackupInfo {
-        let mut backup_info = BackupInfo { name: name, id: "".to_string(), url: url, path: path };
+    pub fn new(name: String, secret: String, url: String, path: String) -> BackupInfo {
+        let mut backup_info = BackupInfo {
+            name: name,
+            secret: secret,
+            id: "".to_string(),
+            url: url,
+            path: path,
+        };
         backup_info.gen_id();
 
         return backup_info;
@@ -85,6 +94,6 @@ impl Task {
         }
     }
     pub fn to_json(&mut self) -> String {
-        return serde_json::to_string_pretty(&self).unwrap();
+        return serde_json::to_string(&self).unwrap();
     }
 }

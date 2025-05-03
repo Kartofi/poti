@@ -1,4 +1,5 @@
 use std::{ fs, os::unix::thread, path::Path, sync::Mutex };
+use reqwest::blocking::Client;
 use tauri::{ Emitter, Manager };
 
 use threadpool::ThreadPool;
@@ -36,7 +37,13 @@ pub fn backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
     }
     let backup = backup.unwrap();
 
-    let resp = reqwest::blocking::get(backup.url.to_owned() + "/journal").unwrap();
+    let client = Client::new();
+
+    let mut resp = client
+        .get(backup.url.to_owned() + "/journal")
+        .header("secret", &backup.secret)
+        .send()
+        .unwrap();
 
     let mut backupitem_server: BackupItem = resp.json::<BackupItem>().unwrap();
 
@@ -57,7 +64,7 @@ pub fn backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
 
     *running = true;
 
-    backupitem_server.sync(window, &data.threadpool);
+    backupitem_server.sync(window, &data.threadpool, &backup.secret);
 
     Ok(())
 }

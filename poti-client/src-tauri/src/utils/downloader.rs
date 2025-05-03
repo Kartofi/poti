@@ -5,10 +5,10 @@ use tauri::{ window, Emitter };
 
 use crate::utils::{ format::format_size, structs::Task };
 
-pub fn download(url: &str, path: &str, window: tauri::Window) {
+pub fn download(url: &str, path: &str, secret: &str, window: tauri::Window) {
     let client = Client::new();
 
-    let mut response = client.get(url).send().unwrap();
+    let mut response = client.get(url).header("secret", secret).send().unwrap();
 
     if !response.status().is_success() {
         eprintln!("Failed to download file: {}", response.status());

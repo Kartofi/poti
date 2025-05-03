@@ -3,7 +3,7 @@ const { listen } = window.__TAURI__.event;
 
 async function backup() {
   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  let res = await invoke("backup", { id: "16967331108002224150" });
+  let res = await invoke("backup", { id: "xmCrnP-c3ExOW-kauWtc-xRDAf7" });
 
   console.log(JSON.stringify(res));
 }
@@ -23,10 +23,10 @@ async function add_backup() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  main();
+  // main();
 
   document.getElementById("backup").addEventListener("click", (e) => {
     e.preventDefault();
-    add_backup();
+    backup();
   });
 });
