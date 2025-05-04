@@ -7,14 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/js/index.js" defer></script>
-    <script type="module" src="/js/tasks.js" defer></script>
+    <script type="module" src="/js/lists.js" defer></script>
   </head>
 
   <body>
     <main class="container">
       <h1>Welcome to Poti</h1>
-      <a href="/tasks.html">123</a>
+      <a href="/tasks.html">Tasks</a>
+
+      <div id="backups" class="list-container"></div>
       <button id="backup">backup</button>
+      <button id="reload_backups">Reload backups</button>
     </main>
   </body>
 </html>

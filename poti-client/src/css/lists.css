@@ -1,4 +1,4 @@
-.download_progress {
+.list-container {
   overflow-y: auto;
   max-height: 250px;
   width: 500px;
@@ -7,19 +7,21 @@
   border-radius: 10px;
   scrollbar-gutter: none;
 }
-.download_progress::-webkit-scrollbar {
+.list-container::-webkit-scrollbar {
   background-color: rgb(0, 0, 0);
-  border-radius: 10px;
+  border-radius: 5px;
 }
-.download_progress::-webkit-scrollbar-thumb {
+.list-container::-webkit-scrollbar-thumb {
   background-color: rgb(107, 107, 107);
-  border-radius: 10px;
+  border-radius: 5px;
 }
-.download_progress::-webkit-scrollbar-thumb:hover {
+.list-container::-webkit-scrollbar-thumb:hover {
   background-color: rgb(167, 167, 167);
 }
-.download_file {
+.list-item {
   height: 50px;
+  min-height: fit-content;
+
   background-color: rgb(37, 37, 37);
   color: white;
   margin: 5px;
@@ -32,6 +34,6 @@
 
   transition-duration: 0.25s;
 }
-.download_file:hover {
+.list-item:hover {
   border-color: white;
 }

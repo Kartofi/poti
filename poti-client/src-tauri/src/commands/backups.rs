@@ -115,6 +115,10 @@ pub async fn remove_backup(id: String) -> Result<(), BackupError> {
 #[tauri::command]
 pub async fn get_backups() -> Result<Vec<BackupInfo>, BackupError> {
     let settings: Settings = Settings::new()?;
+    let mut backups = settings.backups;
 
-    Ok(settings.backups)
+    for i in 0..backups.len() {
+        backups[i].secret = "".to_string();
+    }
+    Ok(backups)
 }
