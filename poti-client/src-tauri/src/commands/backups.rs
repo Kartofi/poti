@@ -1,5 +1,5 @@
 use std::{ fs, os::unix::thread, path::Path, sync::Mutex };
-use reqwest::blocking::Client;
+use reqwest::{ blocking::Client, StatusCode };
 use tauri::{ Emitter, Manager };
 
 use threadpool::ThreadPool;
@@ -39,12 +39,14 @@ pub fn backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
 
     let client = Client::new();
 
-    let mut resp = client
+    let resp = client
         .get(backup.url.to_owned() + "/journal")
         .header("secret", &backup.secret)
         .send()
         .unwrap();
-
+    if resp.status() != StatusCode::OK {
+        return Err(BackupError::new(true, "Can't connect to the server or wrong secret!"));
+    }
     let mut backupitem_server: BackupItem = resp.json::<BackupItem>().unwrap();
 
     fn iter_children_path(backupitem: &mut BackupItem, prefix: String) {
@@ -82,7 +84,18 @@ pub async fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupErr
     }
     let mut backup_info = backup_info;
     backup_info.gen_id();
+    // Check secret/url
+    let client = Client::new();
 
+    let resp = client
+        .get(backup_info.url.to_owned() + "/journal")
+        .header("secret", &backup_info.secret)
+        .send()
+        .unwrap();
+    if resp.status() != StatusCode::OK {
+        return Err(BackupError::new(true, "Invalid server or invalid secret"));
+    }
+    //
     settings.backups.push(backup_info.clone());
 
     settings.save()?;
@@ -117,8 +130,5 @@ pub async fn get_backups() -> Result<Vec<BackupInfo>, BackupError> {
     let settings: Settings = Settings::new()?;
     let mut backups = settings.backups;
 
-    for i in 0..backups.len() {
-        backups[i].secret = "".to_string();
-    }
     Ok(backups)
 }

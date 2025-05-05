@@ -13,8 +13,6 @@ const sizes = ["bytes", "KB", "MB", "GB", "TB"];
 
 let data = [];
 
-let update_ui = false;
-
 let parent = null;
 
 function format_size(input) {
@@ -34,59 +32,48 @@ async function main() {
   });
 
   await listen("task-update", (event) => {
-    console.log(data);
     let json = JSON.parse(event.payload);
 
     let found = false;
-    data.forEach((item) => {
-      if (item.id == json.id) {
-        item = json;
+    for (let index = 0; index < data.length; index++) {
+      const element = data[index];
+      if (element.id == json.id) {
+        data[index] = json;
         found = true;
       }
-    });
+    }
+
     if (!found) {
       data.push(json);
     }
     data.sort((a, b) => b.size - a.size);
 
     localStorage.setItem("tasks", JSON.stringify(data));
-    if (update_ui == true) {
-      updateUi();
-    }
+    updateUi();
   });
 }
 function updateUi() {
+  parent.innerHTML = "";
+
   for (let index = 0; index < data.length; index++) {
     const element = data[index];
     let id = element.id;
 
-    let el = document.getElementById(id);
+    const child = document.createElement("div");
+    child.id = id;
+    child.className = "list-item";
 
-    if (el == null) {
-      const child = document.createElement("div");
-      child.id = id;
-      child.className = "list-item";
+    let html = element_html
+      .replaceAll("[id]", id)
+      .replace("[name]", element.name)
+      .replace("[downloaded]", format_size(element.downloaded))
+      .replace("[size]", format_size(element.size))
+      .replace("[speed]", format_size(element.speed) + "/s")
+      .replace("[progress]", (element.downloaded / element.size) * 100);
 
-      let html = element_html
-        .replaceAll("[id]", id)
-        .replace("[name]", element.name)
-        .replace("[downloaded]", format_size(element.downloaded))
-        .replace("[size]", format_size(element.size))
-        .replace("[speed]", format_size(element.speed) + "/s")
-        .replace("[progress]", (element.downloaded / element.size) * 100);
+    child.innerHTML = html;
 
-      child.innerHTML = html;
-
-      parent.appendChild(child);
-      continue;
-    }
-    let downloaded = document.getElementById(id + "-downloaded");
-    let size = document.getElementById(id + "-size");
-    let speed = document.getElementById(id + "-speed");
-
-    downloaded.innerText = format_size(element.downloaded);
-    size.innerText = format_size(element.size);
-    speed.innerText = format_size(element.speed);
+    parent.appendChild(child);
   }
 }
 document.addEventListener("DOMContentLoaded", async () => {
@@ -95,17 +82,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     data = JSON.parse(data_storage);
   }
 
-  update_ui = window.location.href.includes("tasks.html");
-  if (update_ui == true) {
-    parent = document.getElementById("download_file");
-    updateUi();
+  parent = document.getElementById("download_file");
+  updateUi();
 
-    document.getElementById("clear_downloads").addEventListener("click", () => {
-      data = [];
-      parent.innerHTML = "";
-      localStorage.removeItem("tasks");
-    });
-  }
+  document.getElementById("clear_downloads").addEventListener("click", () => {
+    data = [];
+    parent.innerHTML = "";
+    localStorage.removeItem("tasks");
+  });
 
   main();
 });

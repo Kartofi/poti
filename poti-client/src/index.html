@@ -4,20 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="/css/index.css" />
     <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/lists.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/js/index.js" defer></script>
-    <script type="module" src="/js/lists.js" defer></script>
+    <script type="module" src="/js/tasks.js" defer></script>
   </head>
 
   <body>
     <main class="container">
       <h1>Welcome to Poti</h1>
-      <a href="/tasks.html">Tasks</a>
 
       <div id="backups" class="list-container"></div>
-      <button id="backup">backup</button>
       <button id="reload_backups">Reload backups</button>
+
+      <br />
+      <br />
+      <button id="clear_downloads">Clear downloads</button>
+      <div id="download_file" class="list-container"></div>
     </main>
   </body>
 </html>
