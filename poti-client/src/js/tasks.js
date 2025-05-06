@@ -2,33 +2,22 @@ const { invoke } = window.__TAURI__.core;
 const { listen } = window.__TAURI__.event;
 const appWindow = window.__TAURI__.window;
 
-let element_html = `<a id="[id]-name">[name]</a>
-        <a id="[id]-downloaded">[downloaded]</a>
-        <a id="[id]-size">[size]</a>
-        <a id="[id]-speed">[speed]</a>
-        <br>
-        <progress max="100" value="[progress]" id="[id]-progress"></progress>
-      `;
-const sizes = ["bytes", "KB", "MB", "GB", "TB"];
+import { format_size } from "/js/utils.js";
+import { task_el } from "/js/data.js";
 
 let data = [];
 
 let parent = null;
 
-function format_size(input) {
-  let current = 0;
-  input = Number(input);
-
-  while (input > 1024) {
-    input /= 1024;
-    current++;
-  }
-  return input.toFixed(2) + " " + sizes[current];
+function clear_tasks() {
+  data = [];
+  parent.innerHTML = "";
+  localStorage.removeItem("tasks");
 }
 
-async function main() {
+async function listen_events() {
   await listen("tauri://close-requested", async () => {
-    localStorage.clear();
+    localStorage.removeItem("tasks");
   });
 
   await listen("task-update", (event) => {
@@ -63,7 +52,7 @@ function updateUi() {
     child.id = id;
     child.className = "list-item";
 
-    let html = element_html
+    let html = task_el
       .replaceAll("[id]", id)
       .replace("[name]", element.name)
       .replace("[downloaded]", format_size(element.downloaded))
@@ -86,10 +75,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateUi();
 
   document.getElementById("clear_downloads").addEventListener("click", () => {
-    data = [];
-    parent.innerHTML = "";
-    localStorage.removeItem("tasks");
+    clear_tasks();
   });
 
-  main();
+  listen_events();
 });
+
+export { clear_tasks };

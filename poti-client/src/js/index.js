@@ -1,42 +1,16 @@
-const { invoke } = window.__TAURI__.core;
-const { listen } = window.__TAURI__.event;
-
-async function backup(id) {
-  let res = await invoke("backup", { id: id });
-  console.log("done");
-  return res;
-}
-async function get_backups() {
-  let res = await invoke("get_backups");
-
-  return res;
-}
-async function add_backup() {
-  let res = await invoke("add_backup", {
-    backupInfo: {
-      name: "Hi",
-      id: "",
-      url: "http://localhost:3003",
-      path: "/home/anatoli/Desktop/Poti/poti-client/backup3",
-    },
-  });
-
-  window.alert(JSON.stringify(res));
-}
-
-let element_html = `<a id="[id]-name">[name]</a><br>
-        <a id="[id]-path">[path]</a><br>
-        <a id="[id]-url">[url]</a><br>
-        <button id="backup" backup_id="[id]">Back up NOW</button>
-      `;
+import { add_backup, get_backups, backup } from "/js/tauri-commands.js";
+import { backup_el } from "/js/data.js";
+import { clear_tasks } from "/js/tasks.js";
 let parent = null;
 
 let backups_old = [];
+let times_old = [];
 
 window.addEventListener("DOMContentLoaded", async () => {
-  // main();
-
   parent = document.getElementById("backups");
+
+  times_old = JSON.parse(localStorage.getItem("backups_times")) || [];
+
   document
     .getElementById("reload_backups")
     .addEventListener("click", async () => {
@@ -44,9 +18,32 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
 
   await updateUi();
-  document.getElementById("backup").addEventListener("click", (e) => {
+  document.getElementById("backup").addEventListener("click", async (e) => {
     e.preventDefault();
-    backup(e.target.getAttribute("backup_id"));
+    let id = e.target.getAttribute("backup_id");
+
+    try {
+      clear_tasks();
+      await backup(id);
+
+      let time = new Date();
+
+      let found = false;
+
+      for (let index = 0; index < times_old.length; index++) {
+        const element = times_old[index];
+        if (element.id == id) {
+          element.time = time;
+          found = true;
+          break;
+        }
+      }
+      if (found == false) {
+        times_old.push({ id: id, time: time });
+      }
+      document.getElementById(id + "-time").innerText = time.toISOString();
+      localStorage.setItem("backups_times", JSON.stringify(times_old));
+    } catch (e) {}
   });
 });
 
@@ -68,15 +65,28 @@ async function updateUi() {
       child.id = id;
       child.className = "list-item";
 
-      let html = element_html
+      let html = backup_el
         .replaceAll("[id]", id)
         .replace("[name]", element.name)
         .replace("[path]", element.path)
         .replace("[url]", element.url);
       child.innerHTML = html;
 
+      let found = null;
+
+      for (let index = 0; index < times_old.length; index++) {
+        const element = times_old[index];
+        if (element.id == id) {
+          found = element;
+          break;
+        }
+      }
+
       parent.appendChild(child);
-      continue;
+
+      if (found != null) {
+        document.getElementById(id + "-time").innerText = found.time;
+      }
     }
   }
 }
