@@ -1,5 +1,4 @@
 const { invoke } = window.__TAURI__.core;
-const { listen } = window.__TAURI__.event;
 
 async function backup(id) {
   let res = await invoke("backup", { id: id });
@@ -11,17 +10,24 @@ async function get_backups() {
 
   return res;
 }
-async function add_backup() {
+async function add_backup(name, secret, url, path) {
   let res = await invoke("add_backup", {
     backupInfo: {
-      name: "Hi",
+      name: name,
       id: "",
-      url: "http://localhost:3003",
-      path: "/home/anatoli/Desktop/Poti/poti-client/backup3",
+      secret: secret,
+      url: url,
+      path: path,
     },
   });
 
-  window.alert(JSON.stringify(res));
+  return res;
 }
+async function remove_backup(id) {
+  let res = await invoke("remove_backup", {
+    id,
+  });
 
-export { backup, get_backups, add_backup };
+  return res;
+}
+export { backup, get_backups, add_backup, remove_backup };

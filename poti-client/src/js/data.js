@@ -9,7 +9,7 @@ const task_el = `<a id="[id]-name">[name]</a>
       <a id="[id]-size">[size]</a>
       <a id="[id]-speed">[speed]</a>
       <br>
-      <progress max="100" value="[progress]" id="[id]-progress"></progress>
+      <progress max="100" value="[progress]" id="[id]-progress"></progress><a>[progress]%</a>
     `;
 
 export { backup_el, task_el };

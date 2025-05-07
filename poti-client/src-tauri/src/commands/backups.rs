@@ -42,11 +42,15 @@ pub fn backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
     let resp = client
         .get(backup.url.to_owned() + "/journal")
         .header("secret", &backup.secret)
-        .send()
-        .unwrap();
-    if resp.status() != StatusCode::OK {
-        return Err(BackupError::new(true, "Can't connect to the server or wrong secret!"));
+        .send();
+    if resp.is_err() {
+        return Err(BackupError::new(true, "Can't connect to the server!"));
     }
+    let resp = resp.unwrap();
+    if resp.status() != StatusCode::OK {
+        return Err(BackupError::new(true, "Wrong secret!"));
+    }
+
     let mut backupitem_server: BackupItem = resp.json::<BackupItem>().unwrap();
 
     fn iter_children_path(backupitem: &mut BackupItem, prefix: String) {
@@ -72,7 +76,7 @@ pub fn backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
 }
 
 #[tauri::command]
-pub async fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupError> {
+pub fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupError> {
     let mut settings: Settings = Settings::new()?;
 
     let found = settings.backups
@@ -90,9 +94,8 @@ pub async fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupErr
     let resp = client
         .get(backup_info.url.to_owned() + "/journal")
         .header("secret", &backup_info.secret)
-        .send()
-        .unwrap();
-    if resp.status() != StatusCode::OK {
+        .send();
+    if resp.is_err() || resp.unwrap().status() != StatusCode::OK {
         return Err(BackupError::new(true, "Invalid server or invalid secret"));
     }
     //
@@ -103,7 +106,7 @@ pub async fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupErr
     Ok(backup_info)
 }
 #[tauri::command]
-pub async fn remove_backup(id: String) -> Result<(), BackupError> {
+pub fn remove_backup(id: String) -> Result<(), BackupError> {
     let mut settings: Settings = Settings::new()?;
 
     let found = settings.backups.iter().position(|item| item.id == id);
@@ -126,9 +129,9 @@ pub async fn remove_backup(id: String) -> Result<(), BackupError> {
     Ok(())
 }
 #[tauri::command]
-pub async fn get_backups() -> Result<Vec<BackupInfo>, BackupError> {
+pub fn get_backups() -> Result<Vec<BackupInfo>, BackupError> {
     let settings: Settings = Settings::new()?;
-    let mut backups = settings.backups;
+    let backups = settings.backups;
 
     Ok(backups)
 }

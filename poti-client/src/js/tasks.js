@@ -58,7 +58,10 @@ function updateUi() {
       .replace("[downloaded]", format_size(element.downloaded))
       .replace("[size]", format_size(element.size))
       .replace("[speed]", format_size(element.speed) + "/s")
-      .replace("[progress]", (element.downloaded / element.size) * 100);
+      .replaceAll(
+        "[progress]",
+        ((element.downloaded / element.size) * 100).toFixed(2)
+      );
 
     child.innerHTML = html;
 
