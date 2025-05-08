@@ -14,18 +14,21 @@ pub struct BackupItem {
     pub url: String,
     pub path: String,
 
+    pub is_root: bool,
+
     pub size: u64,
 
     pub children: Vec<BackupItem>,
 }
 impl BackupItem {
-    pub fn new(is_file: bool, path: String) -> BackupItem {
+    pub fn new(is_file: bool, path: String, is_root: bool) -> BackupItem {
         BackupItem {
             is_file: is_file,
             size: 0,
             name: path.split("/").last().unwrap().to_string(),
             url: path.replace(&SETTINGS.backup_path, "/backup"),
             path: path,
+            is_root: is_root,
             children: Vec::new(),
         }
     }
@@ -49,7 +52,8 @@ impl BackupItem {
                     self.add_child(
                         BackupItem::new(
                             is_file,
-                            entry.path().to_str().unwrap_or_default().to_string()
+                            entry.path().to_str().unwrap_or_default().to_string(),
+                            false
                         )
                     );
                 }

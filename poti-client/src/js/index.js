@@ -1,4 +1,11 @@
-import { add_backup, get_backups, backup } from "/js/tauri-commands.js";
+const { listen } = window.__TAURI__.event;
+
+import {
+  add_backup,
+  remove_backup,
+  get_backups,
+  backup,
+} from "/js/tauri-commands.js";
 
 import { backup_el } from "/js/data.js";
 import { format_time } from "/js/utils.js";
@@ -9,31 +16,26 @@ let parent = null;
 let backups_old = [];
 let times_old = [];
 
-async function backup_button(id) {
-  try {
-    clear_tasks();
-    await backup(id);
+function update_backup_time(id) {
+  let time = new Date();
 
-    let time = new Date();
+  let found = false;
 
-    let found = false;
-
-    for (let index = 0; index < times_old.length; index++) {
-      const element = times_old[index];
-      if (element.id == id) {
-        element.time = time;
-        found = true;
-        break;
-      }
+  for (let index = 0; index < times_old.length; index++) {
+    const element = times_old[index];
+    if (element.id == id) {
+      element.time = time;
+      found = true;
+      break;
     }
-    if (found == false) {
-      times_old.push({ id: id, time: time });
-    }
-    document.getElementById(id + "-time").innerText = format_time(
-      time.toISOString()
-    );
-    localStorage.setItem("backups_times", JSON.stringify(times_old));
-  } catch (e) {}
+  }
+  if (found == false) {
+    times_old.push({ id: id, time: time });
+  }
+  document.getElementById(id + "-time").innerText = format_time(
+    time.toISOString()
+  );
+  localStorage.setItem("backups_times", JSON.stringify(times_old));
 }
 
 async function updateUi() {
@@ -81,8 +83,21 @@ async function updateUi() {
     }
   }
 }
+async function listen_events() {
+  await listen("backup-done", (event) => {
+    let id = event.payload;
 
+    update_backup_time(id);
+  });
+
+  await listen("backup-error", (event) => {
+    let json = JSON.parse(event.payload);
+    console.log(json);
+  });
+}
 window.addEventListener("DOMContentLoaded", async () => {
+  await listen_events();
+
   parent = document.getElementById("backups");
 
   try {
@@ -104,7 +119,35 @@ window.addEventListener("DOMContentLoaded", async () => {
   backup_buttons.forEach((element) => {
     element.addEventListener("click", async (e) => {
       e.preventDefault();
-      await backup_button(e.target.getAttribute("backup_id"));
+
+      clear_tasks();
+      await backup(e.target.getAttribute("backup_id"));
+    });
+  });
+
+  let remove_backup_buttons = document.querySelectorAll("#remove_backup");
+
+  remove_backup_buttons.forEach((element) => {
+    element.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try {
+        let id = e.target.getAttribute("backup_id");
+        await remove_backup(id);
+
+        for (let index = 0; index < times_old.length; index++) {
+          const element = times_old[index];
+          if (element.id == id) {
+            found = true;
+            break;
+          }
+        }
+        if (found == true) {
+          times_old.splice(index, 1);
+          localStorage.setItem("backups_times", JSON.stringify(times_old));
+        }
+      } catch (e) {
+        console.log(e);
+      }
     });
   });
 });

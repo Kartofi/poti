@@ -2,13 +2,14 @@ use std::{ default, fs::{ self, OpenOptions }, io::{ Read, Write }, thread };
 
 use rand::{ self, Rng };
 use serde::{ Deserialize, Serialize };
+use serde_json::json;
 use tauri::{ window, Emitter };
 use threadpool::ThreadPool;
 use urlencoding::encode;
 
-use crate::{ downloader, URL };
+use crate::downloader;
 
-use super::id::gen_id;
+use super::{ error::BackupError, id::gen_id };
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BackupItem {
@@ -18,29 +19,53 @@ pub struct BackupItem {
     pub url: String,
     pub path: String,
 
+    pub is_root: bool,
+
     pub size: u64,
 
     pub children: Vec<BackupItem>,
 }
 impl BackupItem {
-    pub fn sync(&mut self, window: tauri::Window, threadpool: &ThreadPool, secret: &str) {
+    pub fn sync(
+        &mut self,
+        window: tauri::Window,
+        threadpool: &ThreadPool,
+        secret: &str,
+        id: &str,
+        url: &str
+    ) -> Result<(), BackupError> {
         if self.is_file == true {
-            let url = URL.to_string() + &self.url.replace(&self.name, &encode(&self.name));
+            let url = url.to_string() + &self.url.replace(&self.name, &encode(&self.name));
             let path = self.path.clone();
             let secret_clone = secret.to_owned();
 
             let window_clone = window.clone();
 
             threadpool.execute(move || {
-                downloader::download(&url, &path, &secret_clone, window_clone);
+                match downloader::download(&url, &path, &secret_clone, window_clone) {
+                    Ok(()) => (),
+                    Err(e) => window.emit("backup-error", e).unwrap(),
+                }
             });
 
-            return;
+            return Ok(());
         }
         fs::create_dir(&self.path).unwrap_or_default();
+
         for child in &mut self.children {
-            child.sync(window.clone(), threadpool, secret);
+            child.sync(window.clone(), threadpool, secret, id, url)?;
         }
+
+        if self.is_root {
+            let threadpool_clone = threadpool.clone();
+            let id_clone = id.to_owned();
+
+            thread::spawn(move || {
+                threadpool_clone.join();
+                window.emit("backup-done", id_clone).unwrap();
+            });
+        }
+        Ok(())
     }
 }
 #[derive(Serialize, Deserialize, Clone)]

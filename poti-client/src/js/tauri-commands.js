@@ -2,7 +2,6 @@ const { invoke } = window.__TAURI__.core;
 
 async function backup(id) {
   let res = await invoke("backup", { id: id });
-  console.log("done");
   return res;
 }
 async function get_backups() {

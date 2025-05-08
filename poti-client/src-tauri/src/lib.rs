@@ -9,8 +9,6 @@ use threadpool::ThreadPool;
 use utils::{ error::BackupError, settings::Settings, structs::{ BackupInfo, BackupItem }, * };
 use commands::backups;
 
-pub static URL: &str = "http://localhost:3000";
-
 struct AppData {
     running: Mutex<bool>,
     threadpool: ThreadPool,

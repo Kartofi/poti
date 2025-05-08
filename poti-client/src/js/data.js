@@ -3,6 +3,7 @@ const backup_el = `<a id="[id]-name">[name]</a><br>
         <a id="[id]-url">[url]</a><br>
         <button id="backup" backup_id="[id]">Back up NOW</button>
         <a id="[id]-time">Nan</a>
+         <button id="remove_backup" backup_id="[id]">DELETE</button>
       `;
 const task_el = `<a id="[id]-name">[name]</a>
       <a id="[id]-downloaded">[downloaded]</a>

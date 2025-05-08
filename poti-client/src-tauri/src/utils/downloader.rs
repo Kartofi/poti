@@ -5,14 +5,20 @@ use tauri::{ window, Emitter };
 
 use crate::utils::{ format::format_size, structs::Task };
 
-pub fn download(url: &str, path: &str, secret: &str, window: tauri::Window) {
+use super::error::BackupError;
+
+pub fn download(
+    url: &str,
+    path: &str,
+    secret: &str,
+    window: tauri::Window
+) -> Result<(), BackupError> {
     let client = Client::new();
 
     let mut response = client.get(url).header("secret", secret).send().unwrap();
 
     if !response.status().is_success() {
-        eprintln!("Failed to download file: {}", response.status());
-        return;
+        return Err(BackupError::new(true, "Failed to download file!"));
     }
     let total_size: u64 = response
         .headers()
@@ -62,4 +68,5 @@ pub fn download(url: &str, path: &str, secret: &str, window: tauri::Window) {
     task.speed = 0;
 
     window.emit("task-update", task.to_json()).unwrap();
+    Ok(())
 }

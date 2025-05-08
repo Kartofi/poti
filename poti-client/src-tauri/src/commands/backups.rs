@@ -70,9 +70,7 @@ pub fn backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
 
     *running = true;
 
-    backupitem_server.sync(window, &data.threadpool, &backup.secret);
-
-    Ok(())
+    backupitem_server.sync(window, &data.threadpool, &backup.secret, &backup.id, &backup.url)
 }
 
 #[tauri::command]
@@ -106,8 +104,23 @@ pub fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupError> {
     Ok(backup_info)
 }
 #[tauri::command]
-pub fn remove_backup(id: String) -> Result<(), BackupError> {
+pub fn remove_backup(window: tauri::Window, id: String) -> Result<(), BackupError> {
     let mut settings: Settings = Settings::new()?;
+
+    let window_clone = window.clone();
+    let data = window_clone.state::<AppData>();
+
+    let mut running = data.running.lock().unwrap();
+    if
+        *running == true &&
+        data.threadpool.queued_count() == 0 &&
+        data.threadpool.active_count() == 0
+    {
+        *running = false;
+    }
+    if *running == true {
+        return Err(BackupError::new(true, "Backup is running!"));
+    }
 
     let found = settings.backups.iter().position(|item| item.id == id);
 
@@ -115,10 +128,14 @@ pub fn remove_backup(id: String) -> Result<(), BackupError> {
         return Err(BackupError::new(true, "No backup found with that id!"));
     }
     let backup = &settings.backups[found.clone().unwrap()];
-    match fs::remove_dir_all(&backup.path) {
-        Ok(()) => {}
-        Err(e) => {
-            return Err(BackupError::new(true, "Can't delete directory!"));
+
+    if Path::new(&backup.path).exists() {
+        match fs::remove_dir_all(&backup.path) {
+            Ok(()) => {}
+            Err(e) => {
+                println!("{:?}", backup.path);
+                return Err(BackupError::new(true, "Can't delete directory!"));
+            }
         }
     }
 
