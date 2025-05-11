@@ -9,7 +9,7 @@ use urlencoding::encode;
 
 use crate::downloader;
 
-use super::{ error::BackupError, id::gen_id };
+use super::{ dir_size, error::BackupError, id::gen_id };
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BackupItem {
@@ -76,6 +76,7 @@ pub struct BackupInfo {
 
     pub url: String,
     pub path: String,
+    pub size: u64,
 }
 impl BackupInfo {
     pub fn new(name: String, secret: String, url: String, path: String) -> BackupInfo {
@@ -85,6 +86,7 @@ impl BackupInfo {
             id: "".to_string(),
             url: url,
             path: path,
+            size: 0,
         };
         backup_info.gen_id();
 
@@ -92,6 +94,9 @@ impl BackupInfo {
     }
     pub fn gen_id(&mut self) {
         self.id = gen_id();
+    }
+    pub fn update_size(&mut self) {
+        self.size = dir_size(self.path.clone()).unwrap_or_default();
     }
 }
 #[derive(Serialize, Deserialize, Default)]

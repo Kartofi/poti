@@ -4,7 +4,7 @@ use serde::{ Deserialize, Serialize };
 
 use super::{ error::BackupError, structs::BackupInfo };
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, Clone)]
 pub struct Settings {
     pub backups: Vec<BackupInfo>,
 }
@@ -33,12 +33,16 @@ impl Settings {
         self.backups = settings.backups;
         Ok(())
     }
-    pub fn save(&self) -> Result<(), BackupError> {
+    pub fn save(&mut self) -> Result<(), BackupError> {
         let mut file = OpenOptions::new().write(true).create(true).open("./settings.poti");
         if file.is_err() {
             return Err(BackupError::new(true, "Cant open/read settings file!"));
         }
         let mut file = file.unwrap();
+
+        for backup in &mut self.backups {
+            backup.update_size();
+        }
 
         let data = serde_json::to_string_pretty(&self);
         match data {

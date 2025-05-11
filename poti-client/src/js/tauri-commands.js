@@ -17,6 +17,7 @@ async function add_backup(name, secret, url, path) {
       secret: secret,
       url: url,
       path: path,
+      size: 0,
     },
   });
 

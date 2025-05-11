@@ -97,6 +97,7 @@ pub fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupError> {
         return Err(BackupError::new(true, "Invalid server or invalid secret"));
     }
     //
+
     settings.backups.push(backup_info.clone());
 
     settings.save()?;
@@ -148,7 +149,11 @@ pub fn remove_backup(window: tauri::Window, id: String) -> Result<(), BackupErro
 #[tauri::command]
 pub fn get_backups() -> Result<Vec<BackupInfo>, BackupError> {
     let settings: Settings = Settings::new()?;
-    let backups = settings.backups;
+    let mut backups = settings.backups;
+
+    for backup in &mut backups {
+        backup.update_size();
+    }
 
     Ok(backups)
 }

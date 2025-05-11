@@ -2,7 +2,6 @@ const sizes = ["bytes", "KB", "MB", "GB", "TB"];
 
 function format_size(input) {
   let current = 0;
-  input = Number(input);
 
   while (input > 1024) {
     input /= 1024;
@@ -19,7 +18,7 @@ function format_time(input) {
   let get_days_diff = (date, date2) =>
     date.getDay() - date2.getDay() + (date.getMonth() - date2.getMonth()) * 30;
 
-  let days_diff = get_days_diff(now, date);
+  let days_diff = Math.abs(get_days_diff(now, date));
 
   if (days_diff < 30) {
     if (days_diff == 0) {
