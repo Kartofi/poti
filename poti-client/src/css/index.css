@@ -1,0 +1,28 @@
+body {
+  margin: 0px;
+}
+
+.popup-background {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.548);
+
+  align-items: center;
+}
+.popup {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 50%;
+  height: 50%;
+
+  border-radius: 10px;
+
+  background-color: rgba(0, 0, 0, 0.349);
+}

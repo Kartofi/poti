@@ -1,6 +1,42 @@
-* {
+:root {
+  --select-color: rgb(255, 198, 40);
+  --back-color: rgb(44, 44, 44);
+  --secondary-back-color: rgb(22, 22, 22);
 }
+
+* {
+  font-family: "DepartureMono Nerd Font Mono";
+
+  color: white;
+  font-size: 15px;
+
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
 body {
   color: white;
   background-color: rgb(39, 39, 39);
+}
+
+.container {
+  width: fit-content;
+  padding: 15px;
+  border-radius: 10px;
+
+  background-color: rgb(48, 48, 48);
+}
+
+button {
+  border-radius: 10px;
+  border-color: white;
+  border-style: solid;
+  border-width: 2px;
+
+  background-color: rgb(48, 48, 48);
+}
+button:hover {
+  border-color: var(--select-color);
+  color: var(--select-color);
+  cursor: pointer;
 }

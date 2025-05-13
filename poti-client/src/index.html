@@ -2,9 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <link rel="stylesheet" href="/css/index.css" />
     <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="/css/lists.css" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/js/index.js" defer></script>
@@ -12,16 +14,21 @@
   </head>
 
   <body>
-    <main class="container">
-      <h1>Welcome to Poti</h1>
+    <div class="popup-background">
+      <div class="popup">
+        <a>Hello</a>
+      </div>
+    </div>
 
-      <div id="backups" class="list-container"></div>
+    <h1>Welcome to Poti</h1>
+    <div class="container">
       <button id="reload_backups">Reload backups</button>
-
-      <br />
-      <br />
+      <div id="backups" class="list-container"></div>
+    </div>
+    <br />
+    <div class="container">
       <button id="clear_downloads">Clear downloads</button>
       <div id="download_file" class="list-container"></div>
-    </main>
+    </div>
   </body>
 </html>
