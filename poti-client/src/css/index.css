@@ -1,7 +1,3 @@
-body {
-  margin: 0px;
-}
-
 .popup-background {
   position: absolute;
   top: 0px;
@@ -10,7 +6,9 @@ body {
 
   background-color: rgba(0, 0, 0, 0.548);
 
-  align-items: center;
+  text-align: center;
+
+  display: none;
 }
 .popup {
   margin: 0;
@@ -19,10 +17,18 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 
-  width: 50%;
-  height: 50%;
+  width: 400px;
+  height: 300px;
 
   border-radius: 10px;
 
   background-color: rgba(0, 0, 0, 0.349);
+}
+#popup-close {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+
+  width: 100%;
+  height: 50px;
 }

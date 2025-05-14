@@ -14,15 +14,20 @@
   </head>
 
   <body>
-    <div class="popup-background">
+    <div class="popup-background" id="popup-parent">
       <div class="popup">
-        <a>Hello</a>
+        <br />
+        <a id="popup-info">Hello</a>
+        <br />
+        <br />
+        <button id="popup-close">Close</button>
       </div>
     </div>
 
     <h1>Welcome to Poti</h1>
     <div class="container">
       <button id="reload_backups">Reload backups</button>
+      <button id="add-backup">Add +</button>
       <div id="backups" class="list-container"></div>
     </div>
     <br />

@@ -1,16 +1,14 @@
 const { listen } = window.__TAURI__.event;
 
-import {
-  add_backup,
-  remove_backup,
-  get_backups,
-  backup,
-} from "/js/tauri-commands.js";
+import { remove_backup, get_backups, backup } from "/js/tauri-commands.js";
 
 import { backup_el } from "/js/data.js";
 import { format_time, format_size } from "/js/utils.js";
 
 import { clear_tasks } from "/js/tasks.js";
+
+import { show_popup } from "/js/popup.js";
+
 let parent = null;
 
 let backups_old = [];
@@ -43,6 +41,7 @@ async function updateUi() {
   if (backups_old == backups) {
     return;
   }
+  backups_old = backups;
 
   parent.innerHTML = "";
   for (let index = 0; index < backups.length; index++) {
@@ -88,13 +87,28 @@ async function updateUi() {
 async function listen_events() {
   await listen("backup-done", (event) => {
     let id = event.payload;
+    let info = null;
 
+    for (let index = 0; index < backups_old.length; index++) {
+      const element = backups_old[index];
+      console.log(element);
+      if (element.id == id) {
+        info = element;
+        break;
+      }
+    }
+    let data = id;
+    if (info != null) {
+      data = info.name;
+    }
+    show_popup('Backup "' + data + '" IS DONE!!!!!');
     update_backup_time(id);
   });
 
   await listen("backup-error", (event) => {
     let json = JSON.parse(event.payload);
     console.log(json);
+    show_popup(JSON.stringify(json));
   });
 }
 window.addEventListener("DOMContentLoaded", async () => {

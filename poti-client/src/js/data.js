@@ -6,12 +6,12 @@ const backup_el = `<a id="[id]-name">[name]</a><br>
          <a id="[id]-size">[size]</a>
          <button id="remove_backup" backup_id="[id]">DELETE</button>
       `;
-const task_el = `<a id="[id]-name">[name]</a>
-      <a id="[id]-downloaded">[downloaded]</a>
-      <a id="[id]-size">[size]</a>
-      <a id="[id]-speed">[speed]</a>
+const task_el = `
+      <a id="[id]-name">[name]</a><br>
+      <a id="[id]-downloaded">[downloaded]</a>/<a id="[id]-size">[size]</a>
       <br>
-      <progress max="100" value="[progress]" id="[id]-progress"></progress><a>[progress]%</a>
+      <progress max="100" value="[progress]" id="[id]-progress"></progress><a>[progress]%</a>  
+      <a id="[id]-speed">[speed]</a>
     `;
 
 export { backup_el, task_el };
