@@ -1,13 +1,19 @@
 const { listen } = window.__TAURI__.event;
 
-import { remove_backup, get_backups, backup } from "/js/tauri-commands.js";
+import {
+  add_backup,
+  remove_backup,
+  get_backups,
+  backup,
+} from "/js/tauri-commands.js";
 
 import { backup_el } from "/js/data.js";
 import { format_time, format_size } from "/js/utils.js";
 
 import { clear_tasks } from "/js/tasks.js";
 
-import { show_popup } from "/js/popup.js";
+import { show_popup } from "/js/components/popup.js";
+import { show_dialog } from "/js/components/dialog.js";
 
 let parent = null;
 
@@ -60,8 +66,8 @@ async function updateUi() {
         .replace("[name]", element.name)
         .replace("[path]", element.path)
         .replace("[url]", element.url)
+        .replace("[secret]", element.secret)
         .replace("[size]", format_size(element.size));
-
       child.innerHTML = html;
 
       let found = null;
@@ -111,10 +117,77 @@ async function listen_events() {
     show_popup(JSON.stringify(json));
   });
 }
-window.addEventListener("DOMContentLoaded", async () => {
-  await listen_events();
+function listen_buttons() {
+  let backup_buttons = document.querySelectorAll("#backup");
 
+  backup_buttons.forEach((element) => {
+    element.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      show_dialog(
+        "Are you sure you want to start a backup?",
+        async (result) => {
+          if (result == false) {
+            return;
+          }
+          clear_tasks();
+          await backup(e.target.getAttribute("backup_id"));
+        }
+      );
+    });
+  });
+
+  let remove_backup_buttons = document.querySelectorAll("#remove_backup");
+
+  async function delete_backup(e) {
+    try {
+      let id = e.target.getAttribute("backup_id");
+      await remove_backup(id);
+
+      for (let index = 0; index < times_old.length; index++) {
+        const element = times_old[index];
+        if (element.id == id) {
+          found = true;
+          break;
+        }
+      }
+      if (found == true) {
+        times_old.splice(index, 1);
+        localStorage.setItem("backups_times", JSON.stringify(times_old));
+      }
+    } catch (e) {
+      show_popup(JSON.stringify(e));
+    }
+  }
+
+  remove_backup_buttons.forEach((element) => {
+    element.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      await show_dialog(
+        "Are you sure you want to DELETE this backup?",
+        async (result) => {
+          if (result == false) {
+            return;
+          }
+          await delete_backup(e);
+        }
+      );
+    });
+  });
+
+  document.querySelectorAll("#click-copy").forEach((element) => {
+    element.addEventListener("click", async (event) => {
+      event.preventDefault();
+      await navigator.clipboard.writeText(element.innerText);
+      show_popup("Copied to clipboard!");
+    });
+  });
+}
+window.addEventListener("DOMContentLoaded", async () => {
   parent = document.getElementById("backups");
+
+  await listen_events();
 
   try {
     times_old = JSON.parse(localStorage.getItem("backups_times")) || [];
@@ -123,47 +196,45 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   document
-    .getElementById("reload_backups")
+    .getElementById("reload-backups")
     .addEventListener("click", async () => {
       await updateUi();
+      listen_buttons();
+      show_popup("Reloaded backups!");
     });
+
+  let new_backup_parent = document.getElementById("new-backup-parent");
+
+  let new_backup_name = document.getElementById("backup-name");
+  let new_backup_url = document.getElementById("backup-url");
+  let new_backup_secret = document.getElementById("backup-secret");
+  let new_backup_path = document.getElementById("backup-path");
+
+  document.getElementById("add-backup").addEventListener("click", async () => {
+    new_backup_parent.style.display = "inherit";
+
+    show_dialog("Create new backup:", async (result) => {
+      new_backup_parent.style.display = "none";
+
+      if (result == false) {
+        return;
+      }
+      try {
+        console.log();
+        await add_backup(
+          new_backup_name.value,
+          new_backup_secret.value,
+          new_backup_url.value,
+          new_backup_path.value
+        );
+      } catch (e) {
+        show_popup(e.message);
+      }
+
+      await updateUi();
+    });
+  });
 
   await updateUi();
-
-  let backup_buttons = document.querySelectorAll("#backup");
-
-  backup_buttons.forEach((element) => {
-    element.addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      clear_tasks();
-      await backup(e.target.getAttribute("backup_id"));
-    });
-  });
-
-  let remove_backup_buttons = document.querySelectorAll("#remove_backup");
-
-  remove_backup_buttons.forEach((element) => {
-    element.addEventListener("click", async (e) => {
-      e.preventDefault();
-      try {
-        let id = e.target.getAttribute("backup_id");
-        await remove_backup(id);
-
-        for (let index = 0; index < times_old.length; index++) {
-          const element = times_old[index];
-          if (element.id == id) {
-            found = true;
-            break;
-          }
-        }
-        if (found == true) {
-          times_old.splice(index, 1);
-          localStorage.setItem("backups_times", JSON.stringify(times_old));
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    });
-  });
+  listen_buttons();
 });

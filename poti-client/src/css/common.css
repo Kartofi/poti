@@ -40,3 +40,42 @@ button:hover {
   color: var(--select-color);
   cursor: pointer;
 }
+input {
+  color: white;
+  background-color: rgb(44, 44, 44, 0.8);
+
+  font-size: 17px;
+
+  border-width: 1px;
+  border-color: white;
+  border-style: solid;
+  border-radius: 5px;
+
+  text-decoration: none;
+  outline: none;
+}
+input:hover,
+input:focus {
+  border-color: var(--select-color);
+}
+
+.red-hover:hover {
+  color: rgb(255, 87, 87);
+  border-color: rgb(255, 87, 87);
+}
+.green-hover:hover {
+  color: rgb(149, 255, 87);
+  border-color: rgb(149, 255, 87);
+}
+
+.reveal-hover {
+  filter: blur(3px);
+
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.reveal-hover:hover {
+  filter: blur(0px);
+  cursor: pointer;
+}

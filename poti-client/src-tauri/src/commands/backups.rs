@@ -94,7 +94,7 @@ pub fn add_backup(backup_info: BackupInfo) -> Result<BackupInfo, BackupError> {
         .header("secret", &backup_info.secret)
         .send();
     if resp.is_err() || resp.unwrap().status() != StatusCode::OK {
-        return Err(BackupError::new(true, "Invalid server or invalid secret"));
+        return Err(BackupError::new(true, "Invalid server or invalid secret!"));
     }
     //
 

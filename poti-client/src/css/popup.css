@@ -1,0 +1,65 @@
+.popup-background {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.548);
+
+  text-align: center;
+
+  display: none;
+}
+.popup {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 400px;
+  height: 300px;
+
+  border-radius: 10px;
+
+  background-color: rgba(0, 0, 0, 0.349);
+}
+.popup > a {
+  font-size: 20px;
+
+  padding: 10px;
+  width: 380px;
+}
+
+.popup-buttons {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+/* Popup */
+#popup-close {
+  width: 50%;
+  height: 50px;
+
+  margin: auto;
+
+  font-size: 20px;
+}
+
+/* Dialog */
+#dialog-close,
+#dialog-confirm {
+  font-size: 20px;
+  padding: 5px 10px;
+}
+
+/* Add backup dialog */
+#new-backup-parent {
+  display: none;
+}
+#new-backup-parent > input {
+  float: center;
+  margin-top: 10px;
+
+  width: 330px;
+}

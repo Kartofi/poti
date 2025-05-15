@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
 
-    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/popup.css" />
     <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="/css/lists.css" />
 
@@ -19,15 +19,47 @@
         <br />
         <a id="popup-info">Hello</a>
         <br />
+        <div class="popup-buttons">
+          <button class="red-hover" id="popup-close">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-background" id="dialog-parent">
+      <div class="popup">
         <br />
-        <button id="popup-close">Close</button>
+        <a id="dialog-info">Hello</a>
+        <br />
+        <br />
+        <div id="new-backup-parent">
+          <input id="backup-name" type="text" placeholder="Name..." />
+          <br />
+          <input id="backup-url" type="url" placeholder="Server url..." />
+          <br />
+          <input
+            id="backup-secret"
+            type="password"
+            placeholder="Secret..shh..🤫"
+          />
+          <br />
+          <input
+            id="backup-path"
+            type="text"
+            placeholder="Backup local path..."
+          />
+        </div>
+
+        <div class="popup-buttons">
+          <button class="red-hover" id="dialog-close">No</button>
+          <button class="green-hover" id="dialog-confirm">Yes</button>
+        </div>
       </div>
     </div>
 
     <h1>Welcome to Poti</h1>
     <div class="container">
-      <button id="reload_backups">Reload backups</button>
-      <button id="add-backup">Add +</button>
+      <button id="reload-backups">Reload backups</button>
+      <button class="green-hover" id="add-backup">Add +</button>
       <div id="backups" class="list-container"></div>
     </div>
     <br />
