@@ -5,6 +5,9 @@
 git clone https://github.com/Kartofi/poti
 cd ./poti/poti
 
+## Build the binary
+cargo build --release
+
 # Build the docker image
 docker build -t poti-server .
 
