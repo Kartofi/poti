@@ -1,4 +1,4 @@
-<img src="https://github.com/Kartofi/poti/tree/main/poti-client/Assets/Icon.png" alt="Poti Icon" width="100">
+<img src="https://github.com/Kartofi/poti/blob/main/Assets/Icon.png" alt="Poti Icon" width="100">
 
 ## Overview
 
