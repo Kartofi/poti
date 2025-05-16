@@ -1,6 +1,8 @@
 <img src="https://github.com/Kartofi/poti/blob/main/Assets/Icon.png" alt="Poti Icon" width="100">
 
 ## Overview
+<img src="https://github.com/Kartofi/poti/blob/main/Assets/App.png" alt="Poti App Icon" width="500">
+<br>
 
 Poti is a simple backup tool that downloads a directory from a "server" to your local storage.
 
