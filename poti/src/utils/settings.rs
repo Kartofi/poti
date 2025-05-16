@@ -1,25 +1,28 @@
 use std::{ fs::{ File, OpenOptions }, io::{ Read, Write } };
 
+use crate::CONFIG;
+
 use super::id;
 
 pub struct Settings {
-    pub backup_path: String,
     pub secret: String,
 }
 impl Settings {
-    pub fn new(backup_path: String, secret: String) -> Settings {
-        Settings { backup_path: backup_path, secret: secret }
+    pub fn new(secret: String) -> Settings {
+        Settings { secret: secret }
     }
     pub fn default() -> Settings {
-        Self::new(String::new(), String::new())
+        Self::new(String::new())
     }
-    pub fn load_path(settings_path: String) -> Settings {
-        let mut settings = Settings::new(settings_path, String::new());
+    pub fn load_path() -> Settings {
+        let mut settings = Settings::new(String::new());
         settings.load();
         return settings;
     }
     pub fn load(&mut self) {
-        let mut file = File::open("./settings.poti").unwrap();
+        println!("Loading settings...");
+
+        let mut file = File::open(CONFIG).unwrap();
 
         let mut data = String::new();
 
@@ -27,15 +30,18 @@ impl Settings {
 
         let lines: Vec<&str> = data.lines().collect();
 
-        self.backup_path = lines[0]["backup_path=".len()..].to_string();
-        if lines.len() == 2 {
-            self.secret = lines[1]["secret=".len()..].to_string();
+        println!("Done loading settings path...");
+
+        if lines.len() > 0 {
+            self.secret = lines[0]["secret=".len()..].to_string();
+            println!("Your secret is {}", self.secret);
             return;
         }
-        let mut file = OpenOptions::new().append(true).open("./settings.poti").unwrap();
+        let mut file = OpenOptions::new().append(true).open(CONFIG).unwrap();
 
         let secret = id::gen_id();
         file.write_all(format!("secret={}", &secret).as_bytes()).unwrap();
         self.secret = secret;
+        println!("Your secret is {}", self.secret);
     }
 }

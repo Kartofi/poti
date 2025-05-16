@@ -2,7 +2,7 @@ use std::{ fs::{ self, File }, os::unix::fs::MetadataExt };
 
 use serde::{ Deserialize, Serialize };
 
-use crate::SETTINGS;
+use crate::{BACKUP, SETTINGS};
 
 use super::error::BackupError;
 
@@ -26,7 +26,7 @@ impl BackupItem {
             is_file: is_file,
             size: 0,
             name: path.split("/").last().unwrap().to_string(),
-            url: path.replace(&SETTINGS.backup_path, "/backup"),
+            url: path.clone(),
             path: path,
             is_root: is_root,
             children: Vec::new(),
@@ -37,7 +37,7 @@ impl BackupItem {
     }
     pub fn scaffold(&mut self) -> Result<(), BackupError> {
         let path = self.path.clone();
-        self.path = self.path.replace(&SETTINGS.backup_path, "");
+        self.path = self.path.replace(BACKUP, "");
 
         if self.is_file == true {
             self.size = File::open(path.clone()).unwrap().metadata().unwrap().size();

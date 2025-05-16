@@ -22,11 +22,26 @@ body {
 .container {
   width: fit-content;
   padding: 15px;
-  border-radius: 10px;
 
   background-color: rgb(48, 48, 48);
-}
 
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--select-color);
+  border-radius: 10px;
+}
+.main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  flex: right;
+  align-items: center;
+}
+.header {
+  text-align: center;
+}
 button {
   border-radius: 10px;
   border-color: white;
@@ -34,11 +49,20 @@ button {
   border-width: 2px;
 
   background-color: rgb(48, 48, 48);
+
+  user-select: none;
+  -webkit-user-select: none;
 }
 button:hover {
   border-color: var(--select-color);
   color: var(--select-color);
   cursor: pointer;
+}
+img {
+  padding: 10px;
+  
+  user-select: none;
+  -webkit-user-select: none;
 }
 input {
   color: white;
@@ -67,7 +91,10 @@ input:focus {
   color: rgb(149, 255, 87);
   border-color: rgb(149, 255, 87);
 }
-
+.theme-color-hover:hover {
+  color: var(--select-color);
+  border-color: var(--select-color);
+}
 .reveal-hover {
   filter: blur(3px);
 

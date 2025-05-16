@@ -131,7 +131,11 @@ function listen_buttons() {
             return;
           }
           clear_tasks();
-          await backup(e.target.getAttribute("backup_id"));
+          try {
+            await backup(e.target.getAttribute("backup_id"));
+          } catch (e) {
+            show_popup(e.message);
+          }
         }
       );
     });
@@ -143,6 +147,8 @@ function listen_buttons() {
     try {
       let id = e.target.getAttribute("backup_id");
       await remove_backup(id);
+
+      let found = false;
 
       for (let index = 0; index < times_old.length; index++) {
         const element = times_old[index];
@@ -156,7 +162,7 @@ function listen_buttons() {
         localStorage.setItem("backups_times", JSON.stringify(times_old));
       }
     } catch (e) {
-      show_popup(JSON.stringify(e));
+      show_popup(e.message);
     }
   }
 

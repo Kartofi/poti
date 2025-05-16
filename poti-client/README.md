@@ -1,6 +1,12 @@
-# Tauri + Vanilla
+## Setup
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
+To build it simply run
+
+```bash
+cargo tauri build
+```
+
+And you are good to go!
 
 ## Recommended IDE Setup
 

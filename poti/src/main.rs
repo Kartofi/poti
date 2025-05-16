@@ -1,18 +1,23 @@
+use std::path::Path;
+
 use lazy_static::lazy_static;
 use choki::*;
 
 mod utils;
 use utils::{ files::BackupItem, settings::* };
 
+static CONFIG: &str = "/config/settings.poti";
+static BACKUP: &str = "/backup";
+
 lazy_static! {
-    static ref SETTINGS: Settings = Settings::load_path("./settings.poti".to_string());
+    static ref SETTINGS: Settings = Settings::load_path();
 }
 fn main() {
-    let mut backup_items = BackupItem::new(false, SETTINGS.backup_path.clone(), true);
+    let backup_items = BackupItem::new(false, BACKUP.to_string(), true);
 
     let mut server: Server<BackupItem> = Server::new(Some(0), Some(backup_items));
 
-    server.use_middleware(|url, req, mut res, public_var| {
+    server.use_middleware(|url, req, res, public_var| {
         let headers = &req.headers;
 
         let found = headers.iter().find(|item| item.name == "secret");
@@ -34,14 +39,14 @@ fn main() {
         .get("/journal", |req, mut res, public_var| {
             let mut backup = public_var.unwrap();
             backup.scaffold_initial().unwrap();
-
-            res.send_json(&serde_json::to_string(&backup).unwrap())
+            res.send_string("data")
+            // res.send_json(&serde_json::to_string(&backup).unwrap())
         })
         .unwrap();
 
-    server.new_static("/backup", &SETTINGS.backup_path).unwrap();
+    server.new_static("/backup", BACKUP).unwrap();
 
-    server.listen(3000, None, Some(6), || { println!("Listening on port 3000!") }).unwrap();
+    server.listen(3000, None, Some(6), || { println!("Api is listening on port 3000!") }).unwrap();
 
     Server::<u8>::lock();
 }
