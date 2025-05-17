@@ -1,12 +1,12 @@
 {
-  "backups": []
-}  {
-      "name": "123",
-      "id": "jbNvAz-zGr3DD-mCMHTO-X8lBDE",
-      "secret": "a8I7Vc-w8PeJC-IdO7na-pbvTBo",
-      "url": "http://localhost:3000",
-      "path": "/home/anatoli/Desktop/Poti/test",
-      "size": 266776409
+  "backups": [
+    {
+      "name": "PI",
+      "id": "1kisT9-iXSWpH-NJeBH9-eehIHb",
+      "secret": "Secret",
+      "url": "http://192.168.0.47:3000",
+      "path": "./backup",
+      "size": 0
     }
   ]
 }

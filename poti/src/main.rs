@@ -38,8 +38,8 @@ fn main() {
         .get("/journal", |req, mut res, public_var| {
             let mut backup = public_var.unwrap();
             backup.scaffold_initial().unwrap();
-            res.send_string("data")
-            // res.send_json(&serde_json::to_string(&backup).unwrap())
+
+            res.send_json(&serde_json::to_string(&backup).unwrap())
         })
         .unwrap();
 
