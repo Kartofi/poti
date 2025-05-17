@@ -2,7 +2,7 @@ use std::{ fs::{ self, File }, os::unix::fs::MetadataExt };
 
 use serde::{ Deserialize, Serialize };
 
-use crate::{BACKUP, SETTINGS};
+use crate::{ SETTINGS };
 
 use super::error::BackupError;
 
@@ -37,7 +37,7 @@ impl BackupItem {
     }
     pub fn scaffold(&mut self) -> Result<(), BackupError> {
         let path = self.path.clone();
-        self.path = self.path.replace(BACKUP, "");
+        self.path = self.path.replace(&SETTINGS.backup_path, "");
 
         if self.is_file == true {
             self.size = File::open(path.clone()).unwrap().metadata().unwrap().size();

@@ -1,5 +1,7 @@
 ## Installation
 
+## NO MORE DOCKER
+
 ```bash
 # Clone the git repo
 git clone https://github.com/Kartofi/poti

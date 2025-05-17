@@ -6,16 +6,17 @@ use super::id;
 
 pub struct Settings {
     pub secret: String,
+    pub backup_path: String,
 }
 impl Settings {
-    pub fn new(secret: String) -> Settings {
-        Settings { secret: secret }
+    pub fn new(secret: String, backup_path: String) -> Settings {
+        Settings { secret: secret, backup_path: backup_path }
     }
     pub fn default() -> Settings {
-        Self::new(String::new())
+        Self::new(String::new(), String::new())
     }
     pub fn load_path() -> Settings {
-        let mut settings = Settings::new(String::new());
+        let mut settings = Settings::new(String::new(), String::new());
         settings.load();
         return settings;
     }
@@ -32,15 +33,17 @@ impl Settings {
 
         println!("Done loading settings path...");
 
-        if lines.len() > 0 {
-            self.secret = lines[0]["secret=".len()..].to_string();
+        self.backup_path = lines[0]["backup_path=".len()..].to_string();
+
+        if lines.len() > 1 {
+            self.secret = lines[1]["secret=".len()..].to_string();
             println!("Your secret is {}", self.secret);
             return;
         }
         let mut file = OpenOptions::new().append(true).open(CONFIG).unwrap();
 
         let secret = id::gen_id();
-        file.write_all(format!("secret={}", &secret).as_bytes()).unwrap();
+        file.write_all(format!("\nsecret={}", &secret).as_bytes()).unwrap();
         self.secret = secret;
         println!("Your secret is {}", self.secret);
     }

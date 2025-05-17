@@ -6,14 +6,13 @@ use choki::*;
 mod utils;
 use utils::{ files::BackupItem, settings::* };
 
-static CONFIG: &str = "/config/settings.poti";
-static BACKUP: &str = "/backup";
+static CONFIG: &str = "./settings.poti";
 
 lazy_static! {
     static ref SETTINGS: Settings = Settings::load_path();
 }
 fn main() {
-    let backup_items = BackupItem::new(false, BACKUP.to_string(), true);
+    let backup_items = BackupItem::new(false, SETTINGS.backup_path.to_string(), true);
 
     let mut server: Server<BackupItem> = Server::new(Some(0), Some(backup_items));
 
@@ -44,7 +43,7 @@ fn main() {
         })
         .unwrap();
 
-    server.new_static("/backup", BACKUP).unwrap();
+    server.new_static("/backup", &SETTINGS.backup_path).unwrap();
 
     server.listen(3000, None, Some(6), || { println!("Api is listening on port 3000!") }).unwrap();
 
