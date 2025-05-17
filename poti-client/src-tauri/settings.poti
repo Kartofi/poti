@@ -7,6 +7,14 @@
       "url": "http://192.168.0.47:3000",
       "path": "./backup",
       "size": 0
+    },
+    {
+      "name": "pc",
+      "id": "Qqf8aX-rylLbU-N5QP3e-OIdpTf",
+      "secret": "Secret",
+      "url": "http://localhost:3000/",
+      "path": "./bakk",
+      "size": 0
     }
   ]
 }

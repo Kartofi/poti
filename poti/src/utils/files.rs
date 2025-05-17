@@ -37,6 +37,7 @@ impl BackupItem {
     }
     pub fn scaffold(&mut self) -> Result<(), BackupError> {
         let path = self.path.clone();
+        self.url = self.path.replace(&SETTINGS.backup_path, "/backup");
         self.path = self.path.replace(&SETTINGS.backup_path, "");
 
         if self.is_file == true {

@@ -9,7 +9,7 @@ use urlencoding::encode;
 
 use crate::downloader;
 
-use super::{ dir_size, error::BackupError, id::gen_id };
+use super::{ dir_size, error::BackupError, id::gen_id, settings::Settings };
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BackupItem {
@@ -62,6 +62,14 @@ impl BackupItem {
 
             thread::spawn(move || {
                 threadpool_clone.join();
+
+                let mut settings = Settings::new().unwrap();
+
+                for backup in &mut settings.backups {
+                    backup.update_size();
+                }
+                settings.save().unwrap();
+
                 window.emit("backup-done", id_clone).unwrap();
             });
         }

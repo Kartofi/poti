@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-choki = "1.1.13"
+choki = "1.1.14"
 lazy_static = "1.5.0"
 rand = "0.9.1"
 serde = { version = "1.0.219", features = ["derive"] }
