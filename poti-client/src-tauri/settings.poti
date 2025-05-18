@@ -1,20 +1,12 @@
 {
   "backups": [
     {
-      "name": "PI",
-      "id": "1kisT9-iXSWpH-NJeBH9-eehIHb",
-      "secret": "Secret",
-      "url": "http://192.168.0.47:3000",
-      "path": "./backup",
-      "size": 763258750
-    },
-    {
       "name": "pc",
       "id": "Qqf8aX-rylLbU-N5QP3e-OIdpTf",
       "secret": "Secret",
       "url": "http://localhost:3000/",
-      "path": "./bakk",
-      "size": 0
+      "path": "../bakk",
+      "size": 266776415
     }
   ]
 }

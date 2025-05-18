@@ -37,6 +37,13 @@ async function listen_events() {
     }
     data.sort((a, b) => b.size - a.size);
 
+    if (data.length > 50) {
+      data = data.filter((a) => a.is_done == false);
+      if (data.length > 50) {
+        data = data[(0, 1)];
+      }
+    }
+
     localStorage.setItem("tasks", JSON.stringify(data));
     updateUi();
   });
