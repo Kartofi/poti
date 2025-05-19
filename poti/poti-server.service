@@ -1,0 +1,12 @@
+[Unit]
+Description=Poti backup server
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/DockerContainers/Poti
+ExecStart=/home/pi/DockerContainers/Poti/poti
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

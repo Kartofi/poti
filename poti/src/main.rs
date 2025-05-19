@@ -45,7 +45,7 @@ fn main() {
 
     server.new_static("/backup", &SETTINGS.backup_path).unwrap();
 
-    server.listen(3000, None, Some(6), || { println!("Api is listening on port 3000!") }).unwrap();
+    server.listen(3400, None, Some(6), || { println!("Api is listening on port 3400!") }).unwrap();
 
     Server::<u8>::lock();
 }
